@@ -1,5 +1,7 @@
 import express from "express";
 
+import errorHandler from "./middleware/errorHandler.js";
+
 // Import Routes
 import movieRoutes from "./routes/movieRoutes.js";
 
@@ -11,8 +13,15 @@ app.use(express.json());
 // API Routes
 app.use("/movies", movieRoutes);
 
-// app.get("/hello", (req, res) => {
-//     res.json({ message: "Hello Movies World" });
-// });
+// 404 handler (for routes that do not exist)
+app.use((req, res, next) => {
+    res.status(404).json({
+        success: false,
+        message: `Routes not found: ${req.method} ${req.originalUrl}`
+    })
+})
+
+// Centralized error handler (must be after routes)
+app.use(errorHandler);
 
 export default app;
